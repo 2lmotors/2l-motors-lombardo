@@ -296,15 +296,27 @@
           <div style="font-size: 0.75rem; color: #34d399;">● En ligne pour vous guider</div>
         </div>
       </div>
-      <button onclick="toggleChatBot()" style="background:transparent; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">✕</button>
+      <div style="display: flex; align-items: center; gap: 0.35rem;">
+        <button id="voiceToggleBtn" onclick="toggleVoiceOutput()" title="Activer / Désactiver la voix de Léo" class="chat-header-icon-btn">🔊</button>
+        <button onclick="toggleChatBot()" title="Fermer" class="chat-header-icon-btn" style="font-size: 1.25rem;">✕</button>
+      </div>
     </div>
 
     <div class="chat-messages" id="chatMessages">
       <!-- Messages du bot et réponses -->
     </div>
 
+    <!-- Barre d'état d'écoute vocale -->
+    <div id="voiceStatusBar" class="voice-status-bar">
+      <span>🎙️</span>
+      <span id="voiceStatusText">Léo vous écoute... Parlez dans votre micro !</span>
+    </div>
+
     <div class="chat-input-bar">
-      <input type="text" id="chatInput" placeholder="Écrivez votre message ou panne..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+      <button id="micBtn" class="chat-mic-btn" onclick="toggleSpeechRecognition()" title="Parler au micro (Saisie vocale)">
+        <span class="mic-icon">🎙️</span>
+      </button>
+      <input type="text" id="chatInput" placeholder="Écrivez ou dictez votre panne..." onkeydown="if(event.key==='Enter') sendChatMessage()">
       <button class="btn btn-primary btn-sm" onclick="sendChatMessage()">Envoyer</button>
     </div>
   </div>

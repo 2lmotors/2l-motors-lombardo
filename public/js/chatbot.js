@@ -1,4 +1,4 @@
-// Chatbot Interactif 2L MOTORS LOMBARDO avec IA Google Gemini
+// Chatbot Interactif 2L MOTORS LOMBARDO avec IA Google Gemini & Module Vocal
 const chatHistory = [];
 
 let chatState = {
@@ -13,6 +13,153 @@ let chatState = {
     date: ''
   }
 };
+
+// --- MODULE VOCAL & SYNTHÈSE (TTS & STT) ---
+let isVoiceOutputEnabled = localStorage.getItem('leo_voice_output') !== 'false';
+let recognitionInstance = null;
+let isListening = false;
+let frenchVoice = null;
+
+function initVoices() {
+  if (!('speechSynthesis' in window)) return;
+  const loadVoices = () => {
+    const voices = window.speechSynthesis.getVoices();
+    frenchVoice = voices.find(v => (v.lang === 'fr-CH' || v.lang === 'fr-FR' || v.lang.startsWith('fr')) && 
+      (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium') || v.name.includes('Thomas') || v.name.includes('Henri')))
+      || voices.find(v => v.lang.startsWith('fr'))
+      || null;
+  };
+  loadVoices();
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+}
+initVoices();
+
+function updateVoiceToggleUI() {
+  const btn = document.getElementById('voiceToggleBtn');
+  if (!btn) return;
+  btn.textContent = isVoiceOutputEnabled ? '🔊' : '🔇';
+  btn.title = isVoiceOutputEnabled ? 'Voix de Léo activée (cliquez pour couper)' : 'Voix de Léo coupée (cliquez pour activer)';
+  btn.style.opacity = isVoiceOutputEnabled ? '1' : '0.55';
+}
+
+function toggleVoiceOutput() {
+  isVoiceOutputEnabled = !isVoiceOutputEnabled;
+  localStorage.setItem('leo_voice_output', isVoiceOutputEnabled ? 'true' : 'false');
+  updateVoiceToggleUI();
+  if (!isVoiceOutputEnabled && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function cleanTextForSpeech(str) {
+  if (!str) return '';
+  return str
+    .replace(/<[^>]*>?/gm, ' ')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/CHF/gi, 'francs suisses')
+    .replace(/\+41/g, 'plus 41')
+    .replace(/•/g, ', ')
+    .replace(/&bull;/g, ', ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function speakLeoMessage(rawText) {
+  if (!isVoiceOutputEnabled || !('speechSynthesis' in window)) return;
+  const clean = cleanTextForSpeech(rawText);
+  if (!clean) return;
+
+  try {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = 'fr-CH';
+    if (frenchVoice) {
+      utterance.voice = frenchVoice;
+    }
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    window.speechSynthesis.speak(utterance);
+  } catch (err) {
+    console.warn('Erreur synthèse vocale:', err);
+  }
+}
+
+function toggleSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("La reconnaissance vocale n'est pas supportée par votre navigateur (veuillez utiliser Chrome, Edge ou Safari).");
+    return;
+  }
+
+  if (isListening && recognitionInstance) {
+    recognitionInstance.stop();
+    return;
+  }
+
+  if (!recognitionInstance) {
+    recognitionInstance = new SpeechRecognition();
+    recognitionInstance.lang = 'fr-FR';
+    recognitionInstance.continuous = false;
+    recognitionInstance.interimResults = true;
+
+    recognitionInstance.onstart = () => {
+      isListening = true;
+      const micBtn = document.getElementById('micBtn');
+      const bar = document.getElementById('voiceStatusBar');
+      if (micBtn) micBtn.classList.add('listening');
+      if (bar) bar.style.display = 'flex';
+      const input = document.getElementById('chatInput');
+      if (input) input.placeholder = "Parlez maintenant...";
+    };
+
+    recognitionInstance.onresult = (event) => {
+      let text = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        text += event.results[i][0].transcript;
+      }
+      const input = document.getElementById('chatInput');
+      if (input && text) {
+        input.value = text;
+      }
+    };
+
+    recognitionInstance.onerror = (event) => {
+      console.warn('Erreur micro:', event.error);
+      isListening = false;
+      const micBtn = document.getElementById('micBtn');
+      const bar = document.getElementById('voiceStatusBar');
+      if (micBtn) micBtn.classList.remove('listening');
+      if (bar) bar.style.display = 'none';
+      const input = document.getElementById('chatInput');
+      if (input) input.placeholder = "Écrivez ou dictez votre panne...";
+    };
+
+    recognitionInstance.onend = () => {
+      isListening = false;
+      const micBtn = document.getElementById('micBtn');
+      const bar = document.getElementById('voiceStatusBar');
+      if (micBtn) micBtn.classList.remove('listening');
+      if (bar) bar.style.display = 'none';
+      const input = document.getElementById('chatInput');
+      if (input) {
+        input.placeholder = "Écrivez ou dictez votre panne...";
+        if (input.value.trim().length > 1) {
+          setTimeout(() => {
+            sendChatMessage();
+          }, 450);
+        }
+      }
+    };
+  }
+
+  try {
+    recognitionInstance.start();
+  } catch (e) {
+    console.warn('Erreur démarrage micro:', e);
+  }
+}
 
 function scrollChatToBottom() {
   const container = document.getElementById('chatMessages');
@@ -31,8 +178,10 @@ function toggleChatBot() {
   if (!widget) return;
   if (widget.style.display === 'flex') {
     widget.style.display = 'none';
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   } else {
     widget.style.display = 'flex';
+    updateVoiceToggleUI();
     const msgs = document.getElementById('chatMessages');
     if (msgs.children.length === 0) {
       greetUser();
@@ -48,6 +197,7 @@ function openChatBot(mode) {
   const widget = document.getElementById('chatWidget');
   if (widget) {
     widget.style.display = 'flex';
+    updateVoiceToggleUI();
     const msgs = document.getElementById('chatMessages');
     if (msgs.children.length === 0) {
       greetUser();
@@ -66,11 +216,19 @@ function addBotMessage(text, quickActions = []) {
   const container = document.getElementById('chatMessages');
   if (!container) return;
 
-  chatHistory.push({ sender: 'bot', text: text.replace(/<[^>]*>?/gm, '') });
+  const plainText = text.replace(/<[^>]*>?/gm, '');
+  chatHistory.push({ sender: 'bot', text: plainText });
 
   const msgDiv = document.createElement('div');
   msgDiv.className = 'chat-msg bot';
-  msgDiv.innerHTML = `<div>${text}</div>`;
+  msgDiv.innerHTML = `
+    <div>${text}</div>
+    <div style="margin-top: 0.35rem;">
+      <button class="voice-msg-btn" onclick="speakLeoMessage(this.parentElement.previousElementSibling.innerText)" title="Réécouter à voix haute">
+        🔊 Écouter
+      </button>
+    </div>
+  `;
 
   if (quickActions.length > 0) {
     const actionsDiv = document.createElement('div');
@@ -87,6 +245,9 @@ function addBotMessage(text, quickActions = []) {
 
   container.appendChild(msgDiv);
   scrollChatToBottom();
+
+  // Lecture vocale automatique de Léo
+  speakLeoMessage(text);
 }
 
 function addUserMessage(text) {
