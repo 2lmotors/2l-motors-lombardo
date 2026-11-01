@@ -59,6 +59,28 @@
       margin-bottom: 1rem;
       display: none;
     }
+    .auth-footer-logo {
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .auth-banner-img {
+      max-width: 240px;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      opacity: 0.82;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      filter: drop-shadow(0 4px 12px rgba(220, 38, 38, 0.25));
+    }
+    .auth-banner-img:hover {
+      opacity: 1;
+      transform: scale(1.03);
+    }
   </style>
 </head>
 <body>
@@ -96,9 +118,6 @@
         <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
       </div>
       <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Se connecter</button>
-      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--text-muted);">
-        Compte de démonstration gestionnaire : <strong>ticino1996@hotmail.com</strong> (mdp: <strong>admin123</strong>)
-      </div>
     </form>
 
     <!-- Formulaire d'Inscription -->
@@ -131,6 +150,10 @@
       </div>
       <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Créer mon compte client</button>
     </form>
+
+    <div class="auth-footer-logo">
+      <img src="/img/motors-2l-banner-dark.png" alt="2L MOTORS LOMBARDO" class="auth-banner-img">
+    </div>
   </div>
 
   <script>
