@@ -85,6 +85,9 @@ function cleanTextForSpeech(str) {
     .replace(/\+41/g, 'plus 41')
     .replace(/•/g, ', ')
     .replace(/&bull;/g, ', ')
+    .replace(/\bsoixante-dix\b/gi, 'septante')
+    .replace(/\bquatre-vingts?\b/gi, 'huitante')
+    .replace(/\bquatre-vingt-dix\b/gi, 'nonante')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -107,9 +110,9 @@ function speakLeoMessage(rawText) {
       utterance.voice = maleFrenchVoice;
     }
     
-    // Tonalité masculine posée et naturelle (pitch 0.85 = plus grave / viril)
-    utterance.pitch = 0.85;
-    utterance.rate = 1.0;
+    // Tonalité masculine posée et naturelle suisse romande (pitch 0.88, rate 0.93)
+    utterance.pitch = 0.88;
+    utterance.rate = 0.93;
     window.speechSynthesis.speak(utterance);
   } catch (err) {
     console.warn('Erreur synthèse vocale:', err);
