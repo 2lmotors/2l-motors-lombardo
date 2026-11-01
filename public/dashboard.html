@@ -52,8 +52,8 @@
           <span class="brand-lombardo">LOMBARDO</span>
         </div>
       </a>
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <span id="userGreeting" style="font-size: 0.95rem; color: #94a3b8;">Chargement...</span>
+      <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <span id="userGreeting" style="font-size: 0.9rem; color: #94a3b8;">Chargement...</span>
         <a href="/" class="btn btn-outline btn-sm">Accueil</a>
         <button onclick="handleLogout()" class="btn btn-outline btn-sm" style="color: #fda4af;">Déconnexion</button>
       </div>
@@ -66,10 +66,10 @@
         <h1 style="font-size: 2rem;">Mon Espace Personnel</h1>
         <p style="color: var(--text-muted);">Gérez vos véhicules, suivez vos devis et échangez avec notre service après-vente.</p>
       </div>
-      <div style="display: flex; gap: 0.75rem;">
-        <button onclick="openModal('modalVehicle')" class="btn btn-outline btn-sm">🚗 Ajouter un véhicule</button>
-        <button onclick="openModal('modalQuote')" class="btn btn-primary btn-sm">📋 Demander un devis</button>
-        <button onclick="openModal('modalSav')" class="btn btn-warning btn-sm">🛠️ Nouveau ticket SAV</button>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; width: 100%;">
+        <button onclick="openModal('modalVehicle')" class="btn btn-outline btn-sm" style="flex: 1 1 auto;">🚗 Ajouter véhicule</button>
+        <button onclick="openModal('modalQuote')" class="btn btn-primary btn-sm" style="flex: 1 1 auto;">📋 Demander devis</button>
+        <button onclick="openModal('modalSav')" class="btn btn-warning btn-sm" style="flex: 1 1 auto;">🛠️ Ticket SAV</button>
       </div>
     </div>
 

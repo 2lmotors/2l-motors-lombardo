@@ -46,11 +46,16 @@
           <span class="brand-lombardo">LOMBARDO</span>
         </div>
       </a>
-      <ul class="nav-links">
-        <li><a href="#services" class="active">Prestations & Tarifs</a></li>
-        <li><a href="#engagements">Nos Garanties</a></li>
-        <li><a href="#sav">Suivi SAV</a></li>
-        <li><a href="#contact">Contact & Horaires</a></li>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Menu de navigation" aria-expanded="false">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#services" onclick="closeMobileMenu()">Prestations & Tarifs</a></li>
+        <li><a href="#engagements" onclick="closeMobileMenu()">Nos Garanties</a></li>
+        <li><a href="#sav" onclick="closeMobileMenu()">Suivi SAV</a></li>
+        <li><a href="#contact" onclick="closeMobileMenu()">Contact & Horaires</a></li>
         <li id="auth-nav-slot">
           <a href="/login.html" class="btn btn-outline btn-sm">Se connecter</a>
         </li>

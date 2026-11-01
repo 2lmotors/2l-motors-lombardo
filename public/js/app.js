@@ -111,3 +111,23 @@ function selectServiceForQuote(serviceId, serviceTitle) {
   }
 }
 
+// Navigation mobile fluide
+function toggleMobileMenu() {
+  const nav = document.getElementById('navLinks');
+  const btn = document.getElementById('mobileMenuBtn');
+  if (!nav || !btn) return;
+  const isOpen = nav.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+function closeMobileMenu() {
+  const nav = document.getElementById('navLinks');
+  const btn = document.getElementById('mobileMenuBtn');
+  if (nav) nav.classList.remove('open');
+  if (btn) {
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+}
+
