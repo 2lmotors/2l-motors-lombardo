@@ -14,6 +14,18 @@ let chatState = {
   }
 };
 
+function scrollChatToBottom() {
+  const container = document.getElementById('chatMessages');
+  if (!container) return;
+  container.scrollTop = container.scrollHeight;
+  setTimeout(() => {
+    container.scrollTop = container.scrollHeight;
+  }, 50);
+  setTimeout(() => {
+    container.scrollTop = container.scrollHeight;
+  }, 200);
+}
+
 function toggleChatBot() {
   const widget = document.getElementById('chatWidget');
   if (!widget) return;
@@ -24,6 +36,8 @@ function toggleChatBot() {
     const msgs = document.getElementById('chatMessages');
     if (msgs.children.length === 0) {
       greetUser();
+    } else {
+      scrollChatToBottom();
     }
     const input = document.getElementById('chatInput');
     if (input) input.focus();
@@ -37,6 +51,8 @@ function openChatBot(mode) {
     const msgs = document.getElementById('chatMessages');
     if (msgs.children.length === 0) {
       greetUser();
+    } else {
+      scrollChatToBottom();
     }
   }
   if (mode === 'devis') {
@@ -70,7 +86,7 @@ function addBotMessage(text, quickActions = []) {
   }
 
   container.appendChild(msgDiv);
-  container.scrollTop = container.scrollHeight;
+  scrollChatToBottom();
 }
 
 function addUserMessage(text) {
@@ -83,7 +99,7 @@ function addUserMessage(text) {
   msgDiv.className = 'chat-msg user';
   msgDiv.textContent = text;
   container.appendChild(msgDiv);
-  container.scrollTop = container.scrollHeight;
+  scrollChatToBottom();
 }
 
 function greetUser() {
@@ -193,7 +209,7 @@ async function sendChatMessage() {
       typingDiv.className = 'chat-msg bot';
       typingDiv.innerHTML = `<span style="color: #94a3b8; font-style: italic;">Léo analyse votre demande... 🔧</span>`;
       container.appendChild(typingDiv);
-      container.scrollTop = container.scrollHeight;
+      scrollChatToBottom();
     }
 
     try {
