@@ -438,10 +438,10 @@ app.post('/api/admin/gemini-key', requireAdmin, (req, res) => {
   res.json({ success: ok, configured: !!apiKey.trim() });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`===============================================`);
   console.log(`🚗 2L MOTORS LOMBARDO - Serveur démarré !`);
-  console.log(`🔗 Accès Web : http://localhost:${PORT}`);
+  console.log(`🔗 Accès Web : http://0.0.0.0:${PORT}`);
   console.log(`🔑 Compte Admin : ticino1996@hotmail.com / admin123`);
   console.log(`===============================================`);
 });
