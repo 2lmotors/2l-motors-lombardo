@@ -1,0 +1,101 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "ticino1996@hotmail.com",
+      "password_hash": "$2b$10$j/xqvdlaV.iYNvfKL.Khxuhp6tGVMvMFWeGhvKzFseb33H//n8K/u",
+      "nom": "LOMBARDO",
+      "prenom": "Mario",
+      "telephone": "+41 76 346 65 01",
+      "adresse": "Chemin de la Biole 10, 1860 Aigle",
+      "role": "admin",
+      "created_at": "2026-11-01T08:08:14.013Z"
+    }
+  ],
+  "vehicles": [],
+  "services": [
+    {
+      "id": 1,
+      "categorie": "Entretien Courant",
+      "titre": "Vidange & Filtre à huile",
+      "description": "Huile moteur synthétique certifiée constructeur + remplacement du filtre à huile + 30 points de contrôle.",
+      "prix_indicatif": 160,
+      "duree_estimee": "45 min",
+      "inclus": "Huile homologuée, filtre, remise à zéro témoin vidange"
+    },
+    {
+      "id": 2,
+      "categorie": "Entretien Courant",
+      "titre": "Révision Complète Constructeur",
+      "description": "Vidange, filtre à huile, filtre à air, filtre d’habitacle, contrôle freinage, batterie et niveaux.",
+      "prix_indicatif": 240,
+      "duree_estimee": "1h30",
+      "inclus": "4 filtres selon modèle, diagnostic électronique, garantie constructeur préservée"
+    },
+    {
+      "id": 3,
+      "categorie": "Freinage",
+      "titre": "Plaquettes de frein avant",
+      "description": "Contrôle des disques et remplacement des plaquettes avant de qualité origine.",
+      "prix_indicatif": 119,
+      "duree_estimee": "1h",
+      "inclus": "Plaquettes qualité première monte, dépoussiérage, contrôle liquide de frein"
+    },
+    {
+      "id": 4,
+      "categorie": "Freinage",
+      "titre": "Disques + Plaquettes avant",
+      "description": "Remplacement complet du train avant de freinage pour une sécurité optimale.",
+      "prix_indicatif": 249,
+      "duree_estimee": "1h30",
+      "inclus": "Disques ventilés/pleins, plaquettes, purge éventuelle"
+    },
+    {
+      "id": 5,
+      "categorie": "Climatisation",
+      "titre": "Entretien & Recharge Climatisation",
+      "description": "Tirage au vide, test d’étanchéité et recharge en fluide frigorigène R134a ou R1234yf.",
+      "prix_indicatif": 120,
+      "duree_estimee": "45 min",
+      "inclus": "Recharge gaz, traitement antibactérien de l’habitacle"
+    },
+    {
+      "id": 6,
+      "categorie": "Moteur & Distribution",
+      "titre": "Kit de Distribution + Pompe à eau",
+      "description": "Remplacement préventif courroie, galets tendeurs, pompe à eau et nouveau liquide de refroidissement.",
+      "prix_indicatif": 490,
+      "duree_estimee": "4h",
+      "inclus": "Courroie, galets, pompe, liquide de refroidissement neuf, garantie 1 an"
+    },
+    {
+      "id": 7,
+      "categorie": "Diagnostic",
+      "titre": "Diagnostic Électronique Valise",
+      "description": "Passage à la valise multimarque dernière génération, lecture et effacement des codes défauts.",
+      "prix_indicatif": 49,
+      "duree_estimee": "30 min",
+      "inclus": "Rapport de diagnostic imprimé ou envoyé par email"
+    },
+    {
+      "id": 8,
+      "categorie": "Pneumatiques",
+      "titre": "Montage & Équilibrage (par pneu)",
+      "description": "Démontage de l’ancien pneu, valve neuve, montage, équilibrage dynamique.",
+      "prix_indicatif": 20,
+      "duree_estimee": "20 min",
+      "inclus": "Valve neuve, équilibrage au gramme près, recyclage pneu usagé"
+    },
+    {
+      "id": 9,
+      "categorie": "Châssis & Liaison au sol",
+      "titre": "Géométrie & Parallélisme",
+      "description": "Réglage des trains avant et arrière au banc laser pour préserver les pneus et la trajectoire.",
+      "prix_indicatif": 100,
+      "duree_estimee": "45 min",
+      "inclus": "Rapport avant/après réglages laser"
+    }
+  ],
+  "quotes": [],
+  "sav_tickets": []
+}
