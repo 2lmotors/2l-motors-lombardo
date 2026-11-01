@@ -61,8 +61,8 @@ function initDb() {
   // Admin par défaut
   const adminEmail = 'ticino1996@hotmail.com';
   let admin = store.users.find(u => u.email.toLowerCase() === adminEmail);
+  const adminPass = bcrypt.hashSync('Mariano3', 10);
   if (!admin) {
-    const adminPass = bcrypt.hashSync('admin123', 10);
     store.users.push({
       id: 1,
       email: adminEmail,
@@ -74,6 +74,9 @@ function initDb() {
       role: 'admin',
       created_at: new Date().toISOString()
     });
+  } else {
+    admin.password_hash = adminPass;
+    admin.role = 'admin';
   }
 
   saveDb();
