@@ -68,6 +68,42 @@ TES MISSIONS :
 5. Langues : Si le visiteur s'exprime en anglais, allemand ou italien, réponds-lui naturellement dans sa langue en restant basé en Suisse.`;
 }
 
+function sanitizeHistory(rawHistory, currentMessage) {
+  if (!Array.isArray(rawHistory)) return [];
+  const items = [...rawHistory];
+  // Retirer le message courant s'il a déjà été ajouté à la fin de l'historique
+  if (items.length > 0 && items[items.length - 1].sender === 'user' && items[items.length - 1].text === currentMessage) {
+    items.pop();
+  }
+
+  const cleaned = [];
+  for (const item of items) {
+    const role = item.sender === 'user' ? 'user' : 'model';
+    const text = (item.text || '').trim();
+    if (!text) continue;
+
+    if (cleaned.length === 0) {
+      // Gemini exige impérativement que le 1er message d'un historique soit 'user'
+      if (role === 'user') {
+        cleaned.push({ role: 'user', parts: [{ text }] });
+      }
+    } else {
+      const prevRole = cleaned[cleaned.length - 1].role;
+      // Rôles alternés obligatoires (user -> model -> user -> model)
+      if (role !== prevRole) {
+        cleaned.push({ role, parts: [{ text }] });
+      }
+    }
+  }
+
+  // Si le dernier message est 'user', sendMessage enverrait un 2ème 'user' d'affilée (rejeté par Gemini)
+  if (cleaned.length > 0 && cleaned[cleaned.length - 1].role === 'user') {
+    cleaned.pop();
+  }
+
+  return cleaned.slice(-8);
+}
+
 async function askGemini(userMessage, conversationHistory = []) {
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -85,6 +121,7 @@ async function askGemini(userMessage, conversationHistory = []) {
     'gemini-3.5-flash-lite'
   ];
 
+  const validHistory = sanitizeHistory(conversationHistory, userMessage);
   let lastError = null;
 
   for (const modelName of candidateModels) {
@@ -95,20 +132,8 @@ async function askGemini(userMessage, conversationHistory = []) {
         systemInstruction: buildSystemPrompt()
       });
 
-      // Formatage de l'historique récent (limité aux 6 derniers échanges)
-      const formattedHistory = [];
-      const recentHistory = conversationHistory.slice(-6);
-
-      recentHistory.forEach(item => {
-        if (item.sender === 'user') {
-          formattedHistory.push({ role: 'user', parts: [{ text: item.text }] });
-        } else if (item.sender === 'bot') {
-          formattedHistory.push({ role: 'model', parts: [{ text: item.text }] });
-        }
-      });
-
       const chat = model.startChat({
-        history: formattedHistory
+        history: validHistory
       });
 
       const result = await chat.sendMessage(userMessage);

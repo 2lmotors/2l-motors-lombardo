@@ -213,10 +213,11 @@ async function sendChatMessage() {
     }
 
     try {
+      const priorHistory = chatHistory.slice(0, -1);
       const res = await fetch('/api/chat/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, history: chatHistory })
+        body: JSON.stringify({ message: text, history: priorHistory })
       });
       const data = await res.json();
 
