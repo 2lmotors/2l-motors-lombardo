@@ -18,16 +18,39 @@ let chatState = {
 let isVoiceOutputEnabled = localStorage.getItem('leo_voice_output') !== 'false';
 let recognitionInstance = null;
 let isListening = false;
-let frenchVoice = null;
+let maleFrenchVoice = null;
+
+function findMaleFrenchVoice() {
+  if (!('speechSynthesis' in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  const frenchVoices = voices.filter(v => v.lang && (v.lang.startsWith('fr') || v.lang.includes('FR') || v.lang.includes('CH')));
+  
+  // Prénoms et mots-clés de voix masculines courantes
+  const maleKeywords = ['guillaume', 'paul', 'claude', 'henri', 'thomas', 'nicolas', 'alain', 'bruno', 'antoine', 'pierre', 'mathieu', 'male', 'homme'];
+  const femaleKeywords = ['hortense', 'julie', 'virginie', 'denise', 'audrey', 'celine', 'corinne', 'female', 'femme', 'elsa', 'chloe', 'lea', 'brigitte'];
+
+  // 1. Voix masculine suisse (fr-CH)
+  const swissMale = frenchVoices.find(v => (v.lang === 'fr-CH' || v.name.toLowerCase().includes('switzerland')) && 
+    maleKeywords.some(m => v.name.toLowerCase().includes(m)));
+  if (swissMale) return swissMale;
+
+  // 2. Voix masculine française explicite
+  const frenchMale = frenchVoices.find(v => maleKeywords.some(m => v.name.toLowerCase().includes(m)));
+  if (frenchMale) return frenchMale;
+
+  // 3. Voix française non explicitement féminine
+  const notFemale = frenchVoices.find(v => !femaleKeywords.some(f => v.name.toLowerCase().includes(f)));
+  if (notFemale) return notFemale;
+
+  return frenchVoices[0] || null;
+}
 
 function initVoices() {
   if (!('speechSynthesis' in window)) return;
   const loadVoices = () => {
-    const voices = window.speechSynthesis.getVoices();
-    frenchVoice = voices.find(v => (v.lang === 'fr-CH' || v.lang === 'fr-FR' || v.lang.startsWith('fr')) && 
-      (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium') || v.name.includes('Thomas') || v.name.includes('Henri')))
-      || voices.find(v => v.lang.startsWith('fr'))
-      || null;
+    maleFrenchVoice = findMaleFrenchVoice();
   };
   loadVoices();
   if (window.speechSynthesis.onvoiceschanged !== undefined) {
@@ -75,11 +98,18 @@ function speakLeoMessage(rawText) {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(clean);
     utterance.lang = 'fr-CH';
-    if (frenchVoice) {
-      utterance.voice = frenchVoice;
+    
+    // Sélection de la voix d'homme
+    if (!maleFrenchVoice) {
+      maleFrenchVoice = findMaleFrenchVoice();
     }
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
+    if (maleFrenchVoice) {
+      utterance.voice = maleFrenchVoice;
+    }
+    
+    // Tonalité masculine posée et naturelle (pitch 0.85 = plus grave / viril)
+    utterance.pitch = 0.85;
+    utterance.rate = 1.0;
     window.speechSynthesis.speak(utterance);
   } catch (err) {
     console.warn('Erreur synthèse vocale:', err);
